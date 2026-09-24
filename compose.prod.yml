@@ -1,0 +1,66 @@
+# Production compose for the EC2 instance.
+# Run: ./fetch-secrets.sh && docker compose -f compose.prod.yaml up -d
+# Keep your original docker-compose.yml for local development.
+#
+# First run only:
+#   docker compose -f compose.prod.yaml exec admin python manage.py migrate
+#   docker compose -f compose.prod.yaml exec admin python manage.py createsuperuser
+
+# Settings shared by the public and admin containers (same image, different mode)
+x-app: &app
+  # Image pulled from ECR, e.g. 123456789012.dkr.ecr.eu-west-2.amazonaws.com/portfolio:1.0
+  image: ${ECR_IMAGE:?set ECR_IMAGE to your ECR image URI}
+  env_file: .env             # Generated on the instance from Parameter Store; never committed
+  depends_on:
+    db:
+      condition: service_healthy
+  restart: unless-stopped
+  read_only: true            # Container filesystem is immutable at runtime (uploads go to S3)
+  tmpfs:
+    - /tmp
+  cap_drop:
+    - ALL                    # Gunicorn on port 8000 needs no Linux capabilities
+  security_opt:
+    - no-new-privileges:true
+
+services:
+  # Public, read-only site. Admin and dashboard URLs are not routed here.
+  web:
+    <<: *app
+    ports:
+      - "8000:8000"          # Security group allows this port from the CloudFront prefix list only
+    mem_limit: 384m
+
+  # Admin and dashboard. Bound to the instance's loopback address only, so it is
+  # unreachable from the network and only available through SSM port forwarding.
+  admin:
+    <<: *app
+    ports:
+      - "127.0.0.1:8001:8000"
+    environment:             # Overrides the matching values from .env
+      ENABLE_ADMIN: "True"
+      TUNNEL_MODE: "True"
+      ALLOWED_HOSTS: "localhost,127.0.0.1"
+    command: ["gunicorn", "portfolio_site.wsgi:application",
+              "--bind", "0.0.0.0:8000", "--workers", "1", "--timeout", "30",
+              "--worker-tmp-dir", "/dev/shm", "--no-control-socket", "--access-logfile", "-"]
+    mem_limit: 256m
+
+  db:
+    image: postgres:16-alpine
+    env_file: .env.db        # POSTGRES_DB / POSTGRES_USER / POSTGRES_PASSWORD from Parameter Store
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    # No "ports:" - the database is reachable only by the app containers on the internal network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 512m
+
+volumes:
+  pg_data:

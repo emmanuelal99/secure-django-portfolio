@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<section class="dashboard" id="login-section">
+    <div class="container container--narrow">
+        <div class="glass-card login-card">
+            <h1 class="login-title">Sign In</h1>
+            <p class="login-subtitle">Access the project dashboard</p>
+
+            {% if form.errors %}
+            <div class="form-errors" role="alert">
+                <p>Invalid username or password. Please try again.</p>
+            </div>
+            {% endif %}
+
+            <form method="post" id="login-form">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="id_username" class="form-label">Username</label>
+                    <input type="text"
+                           name="username"
+                           id="id_username"
+                           class="form-input"
+                           autofocus
+                           autocomplete="username"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_password" class="form-label">Password</label>
+                    <input type="password"
+                           name="password"
+                           id="id_password"
+                           class="form-input"
+                           autocomplete="current-password"
+                           required>
+                </div>
+
+                <button type="submit" class="btn btn--primary btn--lg btn--full" id="login-btn">
+                    Sign In
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

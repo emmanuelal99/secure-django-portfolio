@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Environment variables
+.env
+
+# Django
+db.sqlite3
+media/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Static files (collected)
+staticfiles/
+
+
+# Environment variables (all variants, but keep the example file)
+.env.*
+!.env.example
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+crash.log
+*.tfplan
+
+# Keys and credentials
+*.pem
+*.key
+.aws/
+
+# Logs
+*.log
+
+# Environment variables (all variants, but keep the example file)
+.env
+.env.*
+env.db
+!.env.example

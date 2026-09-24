@@ -1,0 +1,32 @@
+# Secrets and local config
+.env
+.env.*
+
+# Version control and editors
+.git
+.gitignore
+.vscode/
+.idea/
+
+# Local data (never baked into the image)
+*.sqlite3
+media/
+staticfiles/
+*.log
+
+# Python artefacts and virtual environments
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.coverage
+
+# Build and infrastructure files
+Dockerfile
+.dockerignore
+docker-compose*.yml
+compose*.yaml
+fetch-secrets.sh
+terraform/
+*.tfstate*
