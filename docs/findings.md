@@ -82,3 +82,4 @@ Images are served through CloudFront, and the bucket cannot be read directly.
 - **Never type resource IDs by hand.** Copy them from the CLI or the console. In Terraform, reference the distribution's `.arn` so the ID cannot be mistyped.
 - **Read the response, not just the status code.** The `server` header showed who answered (S3, not Django or CloudFront), and the XML error code named the cause each time.
 - **The policy failed closed.** While the ARN was wrong, nobody could read the files, including the distribution itself. The mistake made access stricter, not more open.
+
