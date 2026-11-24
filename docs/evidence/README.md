@@ -8,13 +8,14 @@ The architecture is shown in [architecture.png](../architecture.png). Problems f
 |---|---|
 | [Live site: guest and admin](#live-site-guest-and-admin) | What a visitor can reach, and how the admin gets in |
 | [Edge protection: CloudFront](#edge-protection-cloudfront) | HTTPS, security headers, the admin block and the private origin |
-| [Server and network](#server-and-network) | No public IP, one inbound rule, hardened instance |
+| [Server and network](#server-and-network) | No public IP, one inbound rule, hardened instance, no outbound internet |
 | [Admin isolation on the server](#admin-isolation-on-the-server) | The admin listens on localhost only |
 | [Secrets](#secrets) | Encrypted parameters and root-only files |
 | [Media bucket](#media-bucket) | Private bucket, readable only through CloudFront |
 | [Instance role and permissions](#instance-role-and-permissions) | Least-privilege role and a scoped `PassRole` |
 | [Container image](#container-image) | Immutable tags and vulnerability scanning |
 | [Application code](#application-code) | Static analysis, Django deploy checks and login lockout |
+| [Infrastructure as code](#infrastructure-as-code) | Terraform matches the live environment |
 
 ---
 
@@ -73,6 +74,11 @@ The architecture is shown in [architecture.png](../architecture.png). Problems f
 
 ![Instance hardening](instance-hardening.png)
 **IMDSv2 required with hop limit 2, no key pair, no public IP, encrypted gp3 volume, termination protection on**
+
+![No NAT, site still up](no-nat-site-still-up.png)
+**No NAT gateway and no Elastic IP, and the site still answers 200**
+
+> The first two commands print nothing: there is no NAT gateway and no public IP address in the account. The server has no route to the internet, yet CloudFront still reaches it through the private VPC origin.
 
 ![Session after reboot](ssm-session-after-reboot.png)
 **P-001: Session Manager working after a reboot once the NAT was back**
@@ -156,3 +162,10 @@ The architecture is shown in [architecture.png](../architecture.png). Problems f
 
 ![Lockout log](axes-lockout-log.png)
 **Server log: failed logins recorded, then the login page answers 429 Too Many Requests**
+
+---
+
+## Infrastructure as code
+
+![Terraform plan](terraform-portfolio-no-changes.png)
+**Terraform plan with the read-only role: no changes, 26 entries in state (20 resources and 6 data sources)**

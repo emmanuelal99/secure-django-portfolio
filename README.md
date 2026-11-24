@@ -25,7 +25,7 @@ The diagram source is [architecture.svg](docs/architecture.svg).
 | Admin not on the internet | An edge function returns 403 for `/admin` and `/dashboard`. The public container does not contain the admin. The admin container listens on localhost only. | [403 at the edge](docs/evidence/README.md#live-site-guest-and-admin), [404 from the public container](docs/evidence/README.md#admin-isolation-on-the-server) |
 | Admin access needs IAM | SSM port forwarding with a role that cannot open a shell | [Tunnel and admin pages](docs/evidence/README.md#live-site-guest-and-admin) |
 | Private media | S3 bucket readable only by this CloudFront distribution (OAC), HTTPS only | [Bucket settings and policy](docs/evidence/README.md#media-bucket), [P-002](docs/findings.md#p-002-media-images-did-not-load-through-cloudfront) |
-| No outbound internet at runtime | NAT gateway created for deployments only, then removed | `curl` returns 200 with the NAT gateway and Elastic IP removed |
+| No outbound internet at runtime | NAT gateway created for deployments only, then removed | [No NAT or Elastic IP, site still up](docs/evidence/README.md#server-and-network) |
 | Secrets out of code | Parameter Store SecureString values, written at deploy time to root-only files | [Root-only files](docs/evidence/README.md#secrets) |
 | Hardened instance | IMDSv2 only, encrypted volume, no key pair, termination protection | [Instance hardening](docs/evidence/README.md#server-and-network) |
 | Hardened containers | Read-only file system, all Linux capabilities dropped, `no-new-privileges` | [`compose.prod.yaml`](compose.prod.yaml), [ports](docs/evidence/README.md#admin-isolation-on-the-server) |
@@ -48,7 +48,7 @@ All AWS resources for the workload are in [terraform/main.tf](terraform/main.tf)
 
 - Resources refer to each other instead of using typed IDs. For example, the bucket policy uses the distribution's ARN, which prevents the mistake in finding P-002.
 - Parameter Store values are not managed by Terraform, so secrets never reach the state file.
-- The environment was imported with a read-only role, and every import was checked to show no changes first. The method is described in the landing zone's [D-008](https://github.com/emmanuelal99/aws-landing-zone/blob/main/docs/design-decisions.md#d-008-how-the-existing-environment-was-brought-into-terraform).
+- The environment was imported with a read-only role, and every import was checked to show no changes first ([final plan](docs/evidence/README.md#infrastructure-as-code)). The method is described in the landing zone's [D-008](https://github.com/emmanuelal99/aws-landing-zone/blob/main/docs/design-decisions.md#d-008-how-the-existing-environment-was-brought-into-terraform).
 
 ## Findings
 
