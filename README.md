@@ -2,8 +2,6 @@
 
 A Django portfolio site deployed on AWS with no public server and no admin page on the internet. Visitors reach the site only through CloudFront. The admin is reachable only through an IAM-authenticated SSM tunnel. The server has no outbound internet access while it runs.
 
-**Live site:** [d1h0161c4e9gfm.cloudfront.net](https://d1h0161c4e9gfm.cloudfront.net). Try [`/admin/`](https://d1h0161c4e9gfm.cloudfront.net/admin/) to see the edge block (403).
-
 **Evidence:** screenshots of every control working are in the [evidence gallery](docs/evidence/README.md), starting with [what a guest can reach and how the admin gets in](docs/evidence/README.md#live-site-guest-and-admin).
 
 The site runs on a separate multi-account platform: [aws-landing-zone](https://github.com/emmanuelal99/aws-landing-zone). What the portfolio expects from that platform is listed in [platform-dependencies.md](docs/platform-dependencies.md).
