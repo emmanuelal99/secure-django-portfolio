@@ -27,6 +27,8 @@ $ aws ssm start-session --target <INSTANCE_ID> ...
 An error occurred (TargetNotConnected) when calling the StartSession operation: <INSTANCE_ID> is not connected.
 ```
 
+**Screenshot:** [session working after the reboot](evidence/README.md#server-and-network)
+
 **Lessons:**
 
 - `Online` does not mean a session will work.
@@ -75,6 +77,8 @@ HTTP/1.1 403 Forbidden
 ```
 
 Images are served through CloudFront, and the bucket cannot be read directly.
+
+**Screenshots:** [regional S3 origin and bucket settings](evidence/README.md#media-bucket), [images loading on the live site](evidence/README.md#live-site-guest-and-admin)
 
 **Lessons:**
 

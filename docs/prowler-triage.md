@@ -20,7 +20,7 @@ The scan used a read-only profile and one region. Raw reports are kept outside t
 | Before | 22 |
 | After | 21 |
 
-Every remaining finding is accepted or deferred below, with a reason.
+Every remaining finding is accepted or deferred below, with a reason. Screenshots of the scans before and after are in the [landing zone evidence](https://github.com/emmanuelal99/aws-landing-zone/blob/main/docs/evidence/README.md#security-review-prowler).
 
 ## Fixed
 
